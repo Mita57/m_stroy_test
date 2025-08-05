@@ -6,7 +6,11 @@ export interface IRow {
   label: boolean;
 }
 
-export default (isEdit: boolean): ColDef<IRow>[] => (
+export default (
+  isEdit: boolean,
+  onDeleteClick: (x: number | string) => void,
+  onAddClick: (x: string | number) => void,
+): ColDef<IRow>[] => (
   [
     {
       field: 'id',
@@ -18,6 +22,9 @@ export default (isEdit: boolean): ColDef<IRow>[] => (
       colId: 'actions',
       headerName: 'Категория',
       cellRenderer: CategoryCell,
+      cellRendererParams: {
+        onDeleteClick, onAddClick,
+      },
     },
     { field: 'label', headerName: 'Название', editable: isEdit },
   ]

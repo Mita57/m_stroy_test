@@ -6,6 +6,7 @@
       :rowData='rowData'
       @cell-clicked="onCellClicked"
       @grid-ready="onGridReady"
+      @cell-editing-stopped="onEditStopped"
       :defaultColDef='defaultColDef'
     >
     </ag-grid-vue>
@@ -14,43 +15,73 @@
 
 <script lang='ts' setup>
 import {
-  onMounted, ref, shallowRef, defineExpose,
+  defineExpose, onMounted, ref, shallowRef,
 } from 'vue';
 import { AgGridVue } from 'ag-grid-vue3';
 import type {
-  CellClickedEvent,
-  ColDef,
-  GridApi,
-  GridReadyEvent,
+  CellClickedEvent, CellEditingStoppedEvent, ColDef, GridApi, GridReadyEvent,
 } from 'ag-grid-community';
 import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
-import { useDataTableStore } from '@/stores/dataTableStore';
-import { ItemMember } from '@/utils/TreeStore';
+import { ItemWithChildren, useDataTableStore } from '@/stores/dataTableStore';
 import getCols, { IRow } from '@/utils/getCols';
 import CategoryCell from '@/components/CategoryCell.vue';
+import { ItemMember } from '@/utils/TreeStore';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 const gridApi = shallowRef<GridApi<IRow> | null>(null);
 const dataTableStore = useDataTableStore();
 const isEditMode = ref<boolean>(false);
-const rowData = ref<ItemMember[]>([]);
-const colDefs = ref<ColDef<IRow>[]>(getCols(false));
+const rowData = ref<ItemWithChildren[]>([]);
+
+const onDeleteClick = (id: number | string) => {
+  dataTableStore.removeItem(id);
+  rowData.value = dataTableStore.getItemsToRender;
+};
+
+const onAddClick = (id: string | number) => {
+  dataTableStore.addItem(id);
+  console.log(dataTableStore.getItemsToRender);
+  rowData.value = dataTableStore.getItemsToRender;
+};
+
+const onEditStopped = (event: CellEditingStoppedEvent) => {
+  const oldItem: ItemWithChildren = event.data;
+  const newItem: ItemMember = {
+    ...oldItem,
+    label: event.value,
+  };
+  dataTableStore.updateItem(newItem);
+  rowData.value = dataTableStore.getItemsToRender;
+};
+
+const colDefs = ref<ColDef<IRow>[]>(getCols(
+  false,
+  onDeleteClick,
+  onAddClick,
+));
+
 onMounted(() => {
   rowData.value = dataTableStore.getItemsToRender;
   isEditMode.value = dataTableStore.isEditMode;
   dataTableStore.$subscribe((mutation) => {
     if (mutation.events?.key === 'isEditMode') {
-      gridApi.value!.setGridOption('columnDefs', getCols(mutation.events.newValue));
+      gridApi.value!.setGridOption('columnDefs', getCols(
+        mutation.events.newValue,
+        onDeleteClick,
+        onAddClick,
+      ));
     }
   });
 });
 defineExpose({ CategoryCell });
 
 const onCellClicked = (event: CellClickedEvent) => {
-  if (event.data.children) {
-    dataTableStore.setExpanded(event.data.id);
-    rowData.value = dataTableStore.getItemsToRender;
+  if (event.eventPath[0]?.className?.includes('category-cell-expand')) {
+    if (event.data.children) {
+      dataTableStore.setExpanded(event.data.id);
+      rowData.value = dataTableStore.getItemsToRender;
+    }
   }
 };
 

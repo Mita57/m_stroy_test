@@ -5,6 +5,7 @@
     <div class="category-cell-text">
       <img src="../assets/expand.svg"
            alt="Развернуть"
+           class="category-cell-expand"
            v-if="props.params.data.children.length > 0"
       >
       {{props.params.data.children.length > 0 ? 'Группа' : 'Элемент'}}
@@ -34,10 +35,11 @@ const props = defineProps<{
 }>();
 
 const addClicked = (): void => {
-  console.log(props.params);
+  props.params.onAddClick(props.params.data.id);
 };
 
 const deleteClicked = (): void => {
+  props.params.onDeleteClick(props.params.data.id);
   console.log(props.params);
 };
 </script>
@@ -55,6 +57,16 @@ const deleteClicked = (): void => {
   flex-direction: row;
   align-items: center;
   gap: 8px;
+}
+
+.category-cell-expand {
+  cursor: pointer;
+  transition-duration: 0.3s;
+}
+
+.category-cell-expand:hover {
+  cursor: pointer;
+  background-color: #baf4ff;
 }
 
 .category-cell-actions {

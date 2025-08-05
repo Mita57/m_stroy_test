@@ -7,8 +7,8 @@ export type RootState = {
   expandedNodes: (number | string)[],
 };
 
-interface ItemsWithChildren extends ItemMember{
-  children: ItemsWithChildren[];
+export interface ItemWithChildren extends ItemMember{
+  children: ItemWithChildren[];
   nestingLevel: number;
 }
 
@@ -22,7 +22,7 @@ export const useDataTableStore = defineStore('dataTable', {
     getIsEditMode(state): boolean {
       return state.isEditMode;
     },
-    getItems(state): ItemsWithChildren[] {
+    getItems(state): ItemWithChildren[] {
       const initItems: ItemMember[] = state.treeStore.getAll();
       // todo fixme?
       const nest = (
@@ -39,22 +39,17 @@ export const useDataTableStore = defineStore('dataTable', {
         }));
       return nest(initItems, 0);
     },
-    getItemsToRender(state): ItemsWithChildren[] {
-      const initItems: ItemsWithChildren[] = this.getItems;
-      if (state.expandedNodes.length === 0) {
+    getItemsToRender(state): ItemWithChildren[] {
+      const initItems: ItemWithChildren[] = this.getItems;
+      if (!state.expandedNodes.includes(initItems[0].id)) {
         return initItems;
       }
-      const result: ItemsWithChildren[] = [];
-      const getNodesToRender = (items: ItemsWithChildren[]) => {
+      const result: ItemWithChildren[] = [];
+      const getNodesToRender = (items: ItemWithChildren[]) => {
         items.forEach((item) => {
+          result.push(item);
           if (state.expandedNodes.includes(item.id)) {
-            result.push(item);
-            if (item.children) {
-              getNodesToRender(item.children);
-              // fixme
-              result.push(...item.children.filter((chId) => !(state.expandedNodes
-                .includes(chId.id))));
-            }
+            getNodesToRender(item.children);
           }
         });
       };
@@ -73,8 +68,15 @@ export const useDataTableStore = defineStore('dataTable', {
         this.expandedNodes.push(id);
       }
     },
-    addItem(item: ItemMember) {
-      this.treeStore.addItem(item);
+    addItem(parentId: number | string) {
+      const latestId = Number(this.treeStore.getAll().slice(-1).pop()?.id);
+      const newItem: ItemMember = {
+        label: 'New label',
+        parent: parentId,
+        id: latestId,
+      };
+      this.treeStore.addItem(newItem);
+      this.expandedNodes.push(parentId);
     },
     updateItem(item: ItemMember) {
       this.treeStore.updateItem(item);
