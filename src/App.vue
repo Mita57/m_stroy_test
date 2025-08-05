@@ -1,9 +1,13 @@
 <template>
   <div>
+    <TableControls />
+    <DataTable />
   </div>
 </template>
 
 <script lang="ts" setup>
+import TableControls from '@/components/TableControls.vue';
+import DataTable from './components/DataTable.vue';
 </script>
 
 <style>
