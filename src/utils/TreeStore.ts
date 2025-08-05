@@ -10,7 +10,7 @@ export const testItems = [
   { id: 1, parent: null, label: 'Item 1' },
 
   { id: '2', parent: 1, label: 'Item 2' },
-  { id: 3, parent: 1, label: 'Item 1' },
+  { id: 3, parent: 1, label: 'Item 3' },
 
   { id: 4, parent: '2', label: 'Item 4' },
   { id: 5, parent: '2', label: 'Item 5' },

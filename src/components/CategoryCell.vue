@@ -1,11 +1,13 @@
 <template>
-  <div class="category-cell">
+  <div :style="{ marginLeft: (props.params.data.nestingLevel * 24) + 'px' }"
+       class="category-cell"
+  >
     <div class="category-cell-text">
       <img src="../assets/expand.svg"
            alt="Развернуть"
-           v-if="props.params.data.children"
+           v-if="props.params.data.children.length > 0"
       >
-      {{props.params.data.children ? 'Группа' : 'Элемент'}}
+      {{props.params.data.children.length > 0 ? 'Группа' : 'Элемент'}}
     </div>
     <div class="category-cell-actions" v-if="dataTableStore.isEditMode">
       <button v-on:click="addClicked"
@@ -21,7 +23,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, reactive } from 'vue';
+import { defineProps, reactive, ref } from 'vue';
 import { ICellRendererParams } from 'ag-grid-community';
 import { useDataTableStore } from '@/stores/dataTableStore';
 
@@ -38,8 +40,6 @@ const addClicked = (): void => {
 const deleteClicked = (): void => {
   console.log(props.params);
 };
-// fixme style scope doesn't work for whatever reason
-
 </script>
 
 <style>

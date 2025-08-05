@@ -4,6 +4,7 @@
       style='width: 100%; height: 650px'
       :columnDefs='colDefs'
       :rowData='rowData'
+      @cell-clicked="onCellClicked"
       @grid-ready="onGridReady"
       :defaultColDef='defaultColDef'
     >
@@ -16,7 +17,12 @@ import {
   onMounted, ref, shallowRef, defineExpose,
 } from 'vue';
 import { AgGridVue } from 'ag-grid-vue3';
-import type { ColDef, GridApi, GridReadyEvent } from 'ag-grid-community';
+import type {
+  CellClickedEvent,
+  ColDef,
+  GridApi,
+  GridReadyEvent,
+} from 'ag-grid-community';
 import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
 import { useDataTableStore } from '@/stores/dataTableStore';
 import { ItemMember } from '@/utils/TreeStore';
@@ -31,17 +37,22 @@ const isEditMode = ref<boolean>(false);
 const rowData = ref<ItemMember[]>([]);
 const colDefs = ref<ColDef<IRow>[]>(getCols(false));
 onMounted(() => {
-  rowData.value = dataTableStore.getItems;
-  console.log(dataTableStore.getItems);
+  rowData.value = dataTableStore.getItemsToRender;
   isEditMode.value = dataTableStore.isEditMode;
   dataTableStore.$subscribe((mutation) => {
     if (mutation.events?.key === 'isEditMode') {
-      console.log(gridApi);
-        gridApi.value!.setGridOption('columnDefs', getCols(mutation.events.newValue));
+      gridApi.value!.setGridOption('columnDefs', getCols(mutation.events.newValue));
     }
   });
 });
 defineExpose({ CategoryCell });
+
+const onCellClicked = (event: CellClickedEvent) => {
+  if (event.data.children) {
+    dataTableStore.setExpanded(event.data.id);
+    rowData.value = dataTableStore.getItemsToRender;
+  }
+};
 
 const onGridReady = (params: GridReadyEvent) => {
   gridApi.value = params.api;
