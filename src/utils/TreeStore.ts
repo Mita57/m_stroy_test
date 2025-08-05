@@ -1,5 +1,3 @@
-import It = jest.It;
-
 export interface ItemMember {
   id: number | string;
   parent: string | number | null;

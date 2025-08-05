@@ -1,15 +1,22 @@
 <template>
   <div id="table-controls">
     <div id="table-controls-toggle"
-         @click="dataTableStore.toggleIsEditMode()"
-         @keydown="dataTableStore.toggleIsEditMode()">
+         @click="dataTableStore.toggleIsEditMode"
+         @keydown="dataTableStore.toggleIsEditMode">
       Режим: {{dataTableStore.isEditMode ? 'Редактирование' : 'Просмотр'}}
     </div>
     <div id="table-controls-btn">
-      <button>
+      <button :class="dataTableStore.getCanClickPrev ? '' : 'gray-out'"
+              @click="dataTableStore.prevClick"
+              @keydown="dataTableStore.prevClick"
+      >
         <img src="../assets/arrow.svg" alt="Отменить">
       </button>
-      <button id="table-controls-btn-repeat">
+      <button id="table-controls-btn-repeat"
+              :class="dataTableStore.getCanClickNext ? '' : 'gray-out'"
+              @click="dataTableStore.redoClick"
+              @keydown="dataTableStore.redoClick"
+      >
         <img src="../assets/arrow.svg" alt="Повторить">
       </button>
     </div>
@@ -44,6 +51,14 @@ button {
 }
 button:hover {
   background: #baf4ff;
+}
+.gray-out {
+  -webkit-filter: grayscale(100%);
+  -moz-filter: grayscale(100%);
+  -o-filter: grayscale(100%);
+  -ms-filter: grayscale(100%);
+  filter: grayscale(100%);
+  pointer-events: none;
 }
 #table-controls-btn {
   margin-left: 8px;

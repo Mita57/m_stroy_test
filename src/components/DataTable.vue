@@ -71,6 +71,9 @@ onMounted(() => {
         onDeleteClick,
         onAddClick,
       ));
+    } else {
+      rowData.value = dataTableStore.getItemsToRender;
+      console.log(dataTableStore.getItemsToRender);
     }
   });
 });
