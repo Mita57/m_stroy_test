@@ -51,7 +51,7 @@ export const useDataTableStore = defineStore('dataTable', {
         .map((item) => ({
           ...item,
           children: nest(items, nestingLevel + 1, item.id),
-          expanded: false,
+          expanded: this.expandedNodes.includes(item.id),
           nestingLevel,
         }));
       return nest(initItems, 0);

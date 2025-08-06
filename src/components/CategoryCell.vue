@@ -5,7 +5,7 @@
     <div class="category-cell-text">
       <img src="../assets/expand.svg"
            alt="Развернуть"
-           class="category-cell-expand"
+           :class="'category-cell-expand ' + (props.params.data.expanded ? 'rotated' : '')"
            v-if="props.params.data.children.length > 0"
       >
       {{props.params.data.children.length > 0 ? 'Группа' : 'Элемент'}}
@@ -80,6 +80,10 @@ const deleteClicked = (): void => {
   cursor: pointer;
   padding: 2px;
   transition-duration: 0.3s;
+}
+.rotated {
+  -webkit-transform: scaleY(-1);
+  transform: scaleY(-1);
 }
 button:hover {
   background: #baf4ff;

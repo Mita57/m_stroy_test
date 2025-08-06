@@ -1,9 +1,11 @@
 import TreeStore, { testItems } from '@/utils/TreeStore';
 import { setActivePinia, createPinia } from 'pinia'
 import { useDataTableStore } from '@/stores/dataTableStore';
-
+import { createTestingPinia } from '@pinia/testing'
 import { mount } from '@vue/test-utils';
-// import App from '@/main';
+import TableControls from '@/components/TableControls.vue';
+import { createApp } from 'vue';
+import App from '@/App.vue';
 
 describe("Validate TreeStore Class", () => {
   const treeStore = new TreeStore(testItems);
@@ -78,20 +80,23 @@ describe('Store', () => {
   });
 
 })
-// not working yet
-// describe('Frontend', () => {
-//   beforeEach(() => {
-//     setActivePinia(createPinia())
-//   })
-//   const wrapper = mount(App);
-//
-//
-//   test('Does a wrapper exist', () => {
-//     expect(wrapper.exists()).toBe(true)
-//   })
-//   it('Renders something', () => {
-//     expect(wrapper.html()).toContain('<button>')
-//   })
-// })
-//
-//
+describe('Frontend', () => {
+  it('Renders properly', async () => {
+    const wrapper = mount(TableControls, {
+      global: {
+        plugins: [
+          createTestingPinia({
+            initialState: {
+              treeStore: new TreeStore(testItems),
+              isEditMode: false,
+              expandedNodes: [],
+              operations: [],
+              currentCancelStep: 0,
+            },
+          }),
+        ],
+      },
+    })
+    expect(wrapper.html()).toContain('table-controls-btn-repeat');
+  })
+})
