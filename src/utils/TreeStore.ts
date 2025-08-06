@@ -83,5 +83,3 @@ export default class TreeStore {
     this.items = this.items.map((item) => (item.id === updatedItem.id ? updatedItem : item));
   }
 }
-
-const test = new TreeStore(testItems);
