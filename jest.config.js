@@ -1,3 +1,6 @@
 module.exports = {
-  preset: '@vue/cli-plugin-unit-jest/presets/typescript',
+  presets: [
+    ['@babel/preset-env', {targets: {node: 'current'}}],
+    '@babel/preset-typescript',
+  ]
 };
