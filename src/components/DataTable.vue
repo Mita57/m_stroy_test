@@ -41,7 +41,6 @@ const onDeleteClick = (id: number | string) => {
 
 const onAddClick = (id: string | number) => {
   dataTableStore.addItem(id);
-  console.log(dataTableStore.getItemsToRender);
   rowData.value = dataTableStore.getItemsToRender;
 };
 
@@ -73,7 +72,6 @@ onMounted(() => {
       ));
     } else {
       rowData.value = dataTableStore.getItemsToRender;
-      console.log(dataTableStore.getItemsToRender);
     }
   });
 });

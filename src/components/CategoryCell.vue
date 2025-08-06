@@ -40,7 +40,6 @@ const addClicked = (): void => {
 
 const deleteClicked = (): void => {
   props.params.onDeleteClick(props.params.data.id);
-  console.log(props.params);
 };
 </script>
 

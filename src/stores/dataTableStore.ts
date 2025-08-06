@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import TreeStore, { ItemMember, testItems } from '@/utils/TreeStore';
+import TreeStore, { testItems, ItemMember } from '@/utils/TreeStore';
 
 const ACTIONS_MAX_LENGTH = 10; // max length will be 10, so that it doesn't take too much resource
 
@@ -80,7 +80,7 @@ export const useDataTableStore = defineStore('dataTable', {
     },
     prevClick() {
       this.currentCancelStep += 1;
-      switch (this.operations[this.currentCancelStep - 1].action) {
+      switch (this.operations[this.currentCancelStep - 1]?.action) {
         case 'delete': {
           this.treeStore.addItem(this.operations[this.currentCancelStep - 1].value);
           break;
@@ -100,7 +100,7 @@ export const useDataTableStore = defineStore('dataTable', {
     },
     redoClick() {
       this.currentCancelStep -= 1;
-      switch (this.operations[this.currentCancelStep].action) {
+      switch (this.operations[this.currentCancelStep]?.action) {
         case 'add': {
           this.treeStore.addItem(this.operations[this.currentCancelStep].value);
           break;

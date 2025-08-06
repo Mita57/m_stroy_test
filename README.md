@@ -1,4 +1,5 @@
 # m_stroy_test
+## A little hierarchy structure task I was given as a test. Using vue, pinia.
 
 ## Project setup
 ```
@@ -17,7 +18,7 @@ npm run build
 
 ### Run your unit tests
 ```
-npm run test:unit
+npm run jest
 ```
 
 ### Lints and fixes files
